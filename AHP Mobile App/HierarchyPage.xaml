@@ -20,20 +20,22 @@
                       RowHeight="100">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding .}" />
-                        <!-- Bind directly to the string -->
+                        <TextCell Text="{Binding Name}" Detail="{Binding Priority}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
+
             </ListView>
 
             <Button Text="EVALUATE"
+                    x:Name="EvaluateButton"
                     BackgroundColor="Orange"
                     VerticalOptions="EndAndExpand"
                     HorizontalOptions="FillAndExpand"
                     Margin="20, 0, 20, 20"
                     Padding="20"
                     HeightRequest="60"
-                    Clicked="EvaluateButton_Clicked" />
+                    Clicked="EvaluateButton_Clicked"
+                    IsVisible="false"/>
 
 
         </StackLayout>

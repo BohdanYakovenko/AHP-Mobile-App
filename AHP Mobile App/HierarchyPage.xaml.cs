@@ -23,7 +23,7 @@ namespace AHP_Mobile_App
 
         private async void OnChildNodeTapped(object sender, ItemTappedEventArgs e)
         {
-            if (e.Item is string childName)
+            if (e.Item is var item && item.GetType().GetProperty("Name")?.GetValue(item) is string childName)
             {
                 // Clear the selection
                 ((ListView)sender).SelectedItem = null;
@@ -37,6 +37,7 @@ namespace AHP_Mobile_App
                 }
             }
         }
+
 
         private Node FindNodeByName(IEnumerable<Node> nodes, string name)
         {
@@ -76,7 +77,19 @@ namespace AHP_Mobile_App
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            UpdateListViewItemsSource();
+            // Set button visibility based on the presence of children
+            EvaluateButton.IsVisible = parentNode.Children != null && parentNode.Children.Any();
+
+            // Only update the ListView if the Evaluate button is visible (i.e., there are children)
+            if (EvaluateButton.IsVisible)
+            {
+                UpdateListViewItemsSource();
+            }
+            else
+            {
+                // Clear the ListView or handle it appropriately for leaf nodes
+                ListView1.ItemsSource = new List<object>();
+            }
         }
 
         private void UpdateListViewItemsSource()
@@ -92,7 +105,20 @@ namespace AHP_Mobile_App
                 ListView1.ItemsSource = null;
                 ListView1.ItemsSource = childrenWithPriorities;
             }
+            else
+            {
+                // Handle the case where LocalPriorities might not be evaluated yet
+                var childrenWithoutPriorities = parentNode.Children.Select(child => new
+                {
+                    Name = child,
+                    Priority = ""
+                }).ToList();
+
+                ListView1.ItemsSource = null;
+                ListView1.ItemsSource = childrenWithoutPriorities;
+            }
         }
+
 
 
         private async void EvaluateButton_Clicked(object sender, EventArgs e)
