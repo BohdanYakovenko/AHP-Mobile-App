@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AHP_Mobile_App.HierarchyPage"
+             Title="{Binding Name}">
+
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="{Binding Description}"
+                   VerticalOptions="Start"
+                   HorizontalTextAlignment="Center"
+                   Margin="20"
+                   FontSize="18"/>
+
+            <ListView ItemsSource="{Binding Children}"
+                      x:Name="ListView1"
+                      VerticalOptions="CenterAndExpand"
+                      HorizontalOptions="FillAndExpand"
+                      ItemTapped="OnChildNodeTapped"
+                      RowHeight="100">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Text="{Binding .}" />
+                        <!-- Bind directly to the string -->
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Button Text="EVALUATE"
+                    BackgroundColor="Orange"
+                    VerticalOptions="EndAndExpand"
+                    HorizontalOptions="FillAndExpand"
+                    Margin="20, 0, 20, 20"
+                    Padding="20"
+                    HeightRequest="60"
+                    Clicked="EvaluateButton_Clicked" />
+
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
