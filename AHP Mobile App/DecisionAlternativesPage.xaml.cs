@@ -9,6 +9,8 @@ namespace AHP_Mobile_App
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DecisionAlternativesPage : ContentPage
     {
+        private List<Node> readyToDisplayNodes = new List<Node>();
+
         public DecisionAlternativesPage()
         {
             InitializeComponent();
@@ -23,6 +25,8 @@ namespace AHP_Mobile_App
         private void LoadDecisionAlternatives()
         {
             var hierarchyData = App.HierarchyData;
+            this.Title = hierarchyData.First().Name;
+
             var readyToDisplay = new List<object>();
             HashSet<string> missingDataParents = new HashSet<string>();
 
@@ -48,8 +52,9 @@ namespace AHP_Mobile_App
                 {
                     anyMissingGlobalPriority = true;
                 }
-                string priorityDisplay = globalPriority.HasValue ? $"{globalPriority:P2}" : "N/A";
+                string priorityDisplay = globalPriority.HasValue ? $"{globalPriority:P2}" : "";
                 readyToDisplay.Add(new { Name = leaf.Name, Priority = priorityDisplay });
+                readyToDisplayNodes.Add(leaf);
             }
 
             ListView1.ItemsSource = readyToDisplay;
@@ -57,7 +62,7 @@ namespace AHP_Mobile_App
             // Update labels based on availability of global priorities
             if (anyMissingGlobalPriority)
             {
-                HeaderLabel.Text = "Ratings of alternatives are not available";
+                HeaderLabel.Text = "Ratings of the alternatives are not available:";
                 if (missingDataParents.Count > 0)
                 {
                     SetInfoLabel(missingDataParents);
@@ -65,7 +70,7 @@ namespace AHP_Mobile_App
             }
             else
             {
-                HeaderLabel.Text = "Ratings of alternatives";
+                HeaderLabel.Text = "Ratings of the alternatives:";
                 InfoLabel.Text = "";
                 InfoLabel.IsVisible = false;
                 SubmitButton.IsVisible = true;
@@ -102,8 +107,23 @@ namespace AHP_Mobile_App
         {
             string firstMissing = missingDataParents.First();
             int additionalMissingCount = missingDataParents.Count - 1;
-            InfoLabel.Text = $"Ratings of the alternatives are not available for '{firstMissing}' and {additionalMissingCount} more nodes require evaluation.";
+            InfoLabel.Text = $"'{firstMissing}' and {additionalMissingCount} more nodes require evaluation.";
             InfoLabel.IsVisible = true;
+        }
+
+        private async void OnChildNodeTapped(object sender, ItemTappedEventArgs e)
+        {
+            if (e.Item is var item && item.GetType().GetProperty("Name")?.GetValue(item) is string childName)
+            {
+                ((ListView)sender).SelectedItem = null; // Clear the selection
+
+                // Find the Node directly from readyToDisplayNodes
+                Node childNode = readyToDisplayNodes.FirstOrDefault(n => n.Name == childName);
+                if (childNode != null)
+                {
+                    await Navigation.PushAsync(new HierarchyPage(childNode));
+                }
+            }
         }
     }
 }

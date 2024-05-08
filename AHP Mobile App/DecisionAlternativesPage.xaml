@@ -1,24 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="AHP_Mobile_App.DecisionAlternativesPage"
-             Title="Prioritize IT projects">
+             x:Class="AHP_Mobile_App.DecisionAlternativesPage">
     <ContentPage.Content>
         <StackLayout Padding="10" VerticalOptions="FillAndExpand">
             <Label x:Name="HeaderLabel"
                    FontAttributes="Bold"
-                   HorizontalOptions="Center"
                    VerticalOptions="Start"
                    FontSize="18"
-                   Margin="0,10,0,0" />
+                   HorizontalTextAlignment="Center" />
             <Label x:Name="InfoLabel"
-                   HorizontalOptions="Center"
                    VerticalOptions="Start"
-                   FontSize="16"
-                   IsVisible="False" />
+                   FontSize="18"
+                   IsVisible="False"
+                   HorizontalTextAlignment="Center" />
 
             <ListView x:Name="ListView1"
-                      VerticalOptions="FillAndExpand">
+                      VerticalOptions="CenterAndExpand"
+                      HorizontalOptions="FillAndExpand"
+                      RowHeight="100"
+                      ItemTapped="OnChildNodeTapped">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <TextCell Text="{Binding Name}" Detail="{Binding Priority}" />
@@ -28,12 +29,8 @@
 
             <Button x:Name="SubmitButton"
                     Text="SUBMIT"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="End"
                     BackgroundColor="#007BFF"
                     IsVisible="False" />
-
-
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
