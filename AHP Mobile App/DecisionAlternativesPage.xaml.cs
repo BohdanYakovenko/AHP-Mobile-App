@@ -40,20 +40,38 @@ namespace AHP_Mobile_App
 
             // Process only leaf nodes for ListView display
             var leafNodes = hierarchyData.Where(node => node.Children == null || node.Children.Count == 0);
+            bool anyMissingGlobalPriority = false;
             foreach (var leaf in leafNodes)
             {
                 double? globalPriority = CalculateGlobalPriority(leaf, hierarchyData);
-                string priorityDisplay = globalPriority.HasValue ? $"{globalPriority:P2}" : "";
+                if (!globalPriority.HasValue)
+                {
+                    anyMissingGlobalPriority = true;
+                }
+                string priorityDisplay = globalPriority.HasValue ? $"{globalPriority:P2}" : "N/A";
                 readyToDisplay.Add(new { Name = leaf.Name, Priority = priorityDisplay });
             }
 
             ListView1.ItemsSource = readyToDisplay;
 
-            if (missingDataParents.Count > 0)
+            // Update labels based on availability of global priorities
+            if (anyMissingGlobalPriority)
             {
-                SetInfoLabel(missingDataParents);
+                HeaderLabel.Text = "Ratings of alternatives are not available";
+                if (missingDataParents.Count > 0)
+                {
+                    SetInfoLabel(missingDataParents);
+                }
+            }
+            else
+            {
+                HeaderLabel.Text = "Ratings of alternatives";
+                InfoLabel.Text = "";
+                InfoLabel.IsVisible = false;
+                SubmitButton.IsVisible = true;
             }
         }
+
 
         private double? CalculateGlobalPriority(Node node, List<Node> hierarchyData)
         {

@@ -4,10 +4,15 @@
              x:Class="AHP_Mobile_App.DecisionAlternativesPage"
              Title="Prioritize IT projects">
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout Padding="10" VerticalOptions="FillAndExpand">
+            <Label x:Name="HeaderLabel"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Start"
+                   FontSize="18"
+                   Margin="0,10,0,0" />
             <Label x:Name="InfoLabel"
-                   TextColor="Red"
-                   HorizontalOptions="CenterAndExpand"
+                   HorizontalOptions="Center"
                    VerticalOptions="Start"
                    FontSize="16"
                    IsVisible="False" />
@@ -20,6 +25,15 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+
+            <Button x:Name="SubmitButton"
+                    Text="SUBMIT"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="End"
+                    BackgroundColor="#007BFF"
+                    IsVisible="False" />
+
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
