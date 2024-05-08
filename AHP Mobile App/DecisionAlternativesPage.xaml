@@ -1,12 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="AHP_Mobile_App.DecisionAlternativesPage">
+             x:Class="AHP_Mobile_App.DecisionAlternativesPage"
+             Title="Prioritize IT projects">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <Label x:Name="InfoLabel"
+                   TextColor="Red"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="Start"
+                   FontSize="16"
+                   IsVisible="False" />
+
+            <ListView x:Name="ListView1"
+                      VerticalOptions="FillAndExpand">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Text="{Binding Name}" Detail="{Binding Priority}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
