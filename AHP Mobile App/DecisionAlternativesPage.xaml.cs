@@ -136,7 +136,7 @@ namespace AHP_Mobile_App
                 Priority = CalculateGlobalPriority(node, App.HierarchyData).GetValueOrDefault().ToString("P2")
             }).ToList();
 
-            string[] recipients = { "ya.bogdan.st@gmail.com" };
+            string[] recipients = { "grigory.pishchulov@manchester.ac.uk" };
             string subject = $"AHP results for {this.Title}";
             string body = JsonConvert.SerializeObject(alternativesWithPriorities, Formatting.Indented);
 
