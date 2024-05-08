@@ -30,7 +30,8 @@
             <Button x:Name="SubmitButton"
                     Text="SUBMIT"
                     BackgroundColor="#007BFF"
-                    IsVisible="False" />
+                    IsVisible="False"
+                    Clicked="SubmitButton_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

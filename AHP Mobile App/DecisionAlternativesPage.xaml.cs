@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -123,6 +125,30 @@ namespace AHP_Mobile_App
                 {
                     await Navigation.PushAsync(new HierarchyPage(childNode));
                 }
+            }
+        }
+
+        private async void SubmitButton_Clicked(object sender, EventArgs e)
+        {
+            var alternativesWithPriorities = readyToDisplayNodes.Select(node => new
+            {
+                node.Name,
+                Priority = CalculateGlobalPriority(node, App.HierarchyData).GetValueOrDefault().ToString("P2")
+            }).ToList();
+
+            string[] recipients = { "ya.bogdan.st@gmail.com" };
+            string subject = $"AHP results for {this.Title}";
+            string body = JsonConvert.SerializeObject(alternativesWithPriorities, Formatting.Indented);
+
+            EmailMessage message;
+            try
+            {
+                message = new EmailMessage(subject, body, recipients);
+                await Email.ComposeAsync(message);
+            }
+            catch (FeatureNotSupportedException ex)
+            {
+                await DisplayAlert("Error", ex.Message, "OK");
             }
         }
     }
