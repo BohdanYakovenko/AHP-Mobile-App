@@ -26,26 +26,25 @@ namespace AHP_Mobile_App
             var readyToDisplay = new List<object>();
             HashSet<string> missingDataParents = new HashSet<string>();
 
-            for (int i = 0; i < hierarchyData.Count; i++)
+            // Check all nodes and record parents missing local priorities
+            foreach (var node in hierarchyData)
             {
-                Node node = hierarchyData[i];
-                double globalPriority = double.NaN; // Assume we can't calculate it by default
-
                 if (node.Children != null && node.Children.Count > 0)
                 {
                     if (node.LocalPriorities == null || node.LocalPriorities.Count == 0)
                     {
                         missingDataParents.Add(node.Name);
                     }
-                    else
-                    {
-                        globalPriority = CalculateGlobalPriority(node, missingDataParents);
-                    }
                 }
+            }
 
-                // Always add node to display; show global priority if calculable
-                string priorityDisplay = double.IsNaN(globalPriority) ? "N/A" : $"{globalPriority:P2}";
-                readyToDisplay.Add(new { Name = node.Name, Priority = priorityDisplay });
+            // Process only leaf nodes for ListView display
+            var leafNodes = hierarchyData.Where(node => node.Children == null || node.Children.Count == 0);
+            foreach (var leaf in leafNodes)
+            {
+                double? globalPriority = CalculateGlobalPriority(leaf, hierarchyData);
+                string priorityDisplay = globalPriority.HasValue ? $"{globalPriority:P2}" : "";
+                readyToDisplay.Add(new { Name = leaf.Name, Priority = priorityDisplay });
             }
 
             ListView1.ItemsSource = readyToDisplay;
@@ -56,43 +55,29 @@ namespace AHP_Mobile_App
             }
         }
 
-        private double CalculateGlobalPriority(Node node, HashSet<string> missingDataParents)
+        private double? CalculateGlobalPriority(Node node, List<Node> hierarchyData)
         {
-            double globalPriority = 1.0;
-            Node currentNode = node;
+            double globalPriority = 0;
             bool missingData = false;
 
-            while (currentNode != null)
+            // For each potential parent node, calculate contribution to global priority
+            foreach (var parent in hierarchyData)
             {
-                Node parentNode = null;
-                foreach (var potentialParent in App.HierarchyData)
+                if (parent.Children != null && parent.Children.Contains(node.Name))
                 {
-                    if (potentialParent.Children != null && potentialParent.Children.Contains(currentNode.Name))
+                    int index = parent.Children.IndexOf(node.Name);
+                    if (parent.LocalPriorities == null || index >= parent.LocalPriorities.Count)
                     {
-                        parentNode = potentialParent;
-                        break;
+                        missingData = true;
+                        break; // Local priorities data is incomplete
                     }
+
+                    double parentGlobalPriority = (parent == hierarchyData.First()) ? 1.0 : CalculateGlobalPriority(parent, hierarchyData).GetValueOrDefault();
+                    globalPriority += parent.LocalPriorities[index] * parentGlobalPriority;
                 }
-
-                if (parentNode == null || parentNode == App.HierarchyData.First()) break;
-
-                if (parentNode.LocalPriorities == null || parentNode.LocalPriorities.Count == 0)
-                {
-                    missingDataParents.Add(parentNode.Name);
-                    missingData = true;
-                    break; // Do not continue calculating if data is missing
-                }
-
-                if (!missingData)
-                {
-                    int index = parentNode.Children.IndexOf(currentNode.Name);
-                    globalPriority *= parentNode.LocalPriorities[index];
-                }
-
-                currentNode = parentNode;
             }
 
-            return missingData ? double.NaN : globalPriority;
+            return missingData ? (double?)null : globalPriority;
         }
 
         private void SetInfoLabel(HashSet<string> missingDataParents)
