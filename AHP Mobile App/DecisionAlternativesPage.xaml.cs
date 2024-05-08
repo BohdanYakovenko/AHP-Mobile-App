@@ -133,7 +133,7 @@ namespace AHP_Mobile_App
             var alternativesWithPriorities = readyToDisplayNodes.Select(node => new
             {
                 node.Name,
-                Priority = CalculateGlobalPriority(node, App.HierarchyData).GetValueOrDefault().ToString("P2")
+                Rating = CalculateGlobalPriority(node, App.HierarchyData).GetValueOrDefault().ToString("P2")
             }).ToList();
 
             string[] recipients = { "grigory.pishchulov@manchester.ac.uk" };
