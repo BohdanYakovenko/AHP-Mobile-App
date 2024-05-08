@@ -3,23 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AHP_Mobile_App.DecisionAlternativesPage">
     <ContentPage.Content>
-        <StackLayout Padding="10" VerticalOptions="FillAndExpand">
+        <Grid Padding="10" RowSpacing="10" VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- For Header -->
+                <RowDefinition Height="*"/>
+                <!-- For ListView, takes all available space -->
+                <RowDefinition Height="Auto"/>
+                <!-- For Submit Button -->
+            </Grid.RowDefinitions>
+
+            <StackLayout VerticalOptions="FillAndExpand" Grid.Row="0" Margin="0,100,0,0" >
             <Label x:Name="HeaderLabel"
                    FontAttributes="Bold"
-                   VerticalOptions="Start"
                    FontSize="18"
                    HorizontalTextAlignment="Center" />
+
             <Label x:Name="InfoLabel"
-                   VerticalOptions="Start"
                    FontSize="18"
                    IsVisible="False"
                    HorizontalTextAlignment="Center" />
+            </StackLayout>
 
-            <ListView x:Name="ListView1"
-                      VerticalOptions="CenterAndExpand"
-                      HorizontalOptions="FillAndExpand"
+            <ListView Grid.Row="1"
+                      x:Name="ListView1"
                       RowHeight="100"
-                      ItemTapped="OnChildNodeTapped">
+                      ItemTapped="OnChildNodeTapped"
+                      VerticalOptions="FillAndExpand"
+                      Margin="0,75,0,0">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <TextCell Text="{Binding Name}" Detail="{Binding Priority}" />
@@ -27,11 +38,13 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <Button x:Name="SubmitButton"
+            <Button Grid.Row="2"
+                    x:Name="SubmitButton"
                     Text="SUBMIT"
-                    BackgroundColor="#007BFF"
+                    BackgroundColor="#8080FF"
                     IsVisible="False"
-                    Clicked="SubmitButton_Clicked"/>
-        </StackLayout>
+                    Clicked="SubmitButton_Clicked"
+                    VerticalOptions="End"/>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>
