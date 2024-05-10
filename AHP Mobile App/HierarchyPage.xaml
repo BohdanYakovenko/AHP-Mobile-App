@@ -5,7 +5,9 @@
              Title="{Binding Name}">
 
     <ContentPage.Content>
+        
         <StackLayout Padding="10" VerticalOptions="FillAndExpand">
+            
             <Label Text="{Binding Description}"
                    VerticalOptions="Start"
                    HorizontalTextAlignment="Center"
@@ -18,9 +20,11 @@
                       HorizontalOptions="FillAndExpand"
                       ItemTapped="OnChildNodeTapped"
                       RowHeight="100">
+                
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding Name}" Detail="{Binding Priority}" />
+                        <TextCell Text="{Binding Name}" 
+                                  Detail="{Binding Priority}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
 
@@ -34,5 +38,6 @@
 
 
         </StackLayout>
+        
     </ContentPage.Content>
 </ContentPage>

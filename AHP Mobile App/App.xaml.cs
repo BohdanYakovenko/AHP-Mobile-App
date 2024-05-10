@@ -19,6 +19,7 @@ namespace AHP_Mobile_App
             MainPage = new NavigationPage(new MainPage());
         }
 
+        // Loads hierarchy data from a remote JSON file and deserializes it to a list of Node objects.
         private async Task LoadHierarchyDataAsync()
         {
             var url = "https://personalpages.manchester.ac.uk/staff/grigory.pishchulov/Hierarchy.json";
@@ -28,12 +29,15 @@ namespace AHP_Mobile_App
                 HierarchyData = JsonConvert.DeserializeObject<List<Node>>(response);
             }
 
+            // Updates the main page based on the loaded data.
             MainPage = new NavigationPage(new HierarchyPage(HierarchyData.First()));
         }
 
         protected override async void OnStart()
         {
             await LoadHierarchyDataAsync();
+
+            // Checks if data is loaded correctly, showing error if not.
             if (HierarchyData != null && HierarchyData.Any())
             {
                 MainPage = new NavigationPage(new MainPage());
@@ -44,6 +48,7 @@ namespace AHP_Mobile_App
             }
         }
 
+
         protected override void OnSleep()
         {
         }
@@ -52,6 +57,7 @@ namespace AHP_Mobile_App
         {
         }
     }
+
 
     public class Node
     {

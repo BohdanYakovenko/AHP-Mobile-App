@@ -11,6 +11,7 @@ namespace AHP_Mobile_App
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DecisionAlternativesPage : ContentPage
     {
+        // Holds the list of nodes that will be binded to ListView
         private List<Node> readyToDisplayNodes = new List<Node>();
 
         public DecisionAlternativesPage()
@@ -30,9 +31,11 @@ namespace AHP_Mobile_App
             this.Title = hierarchyData.First().Name;
 
             var readyToDisplay = new List<object>();
+
+            // Hashset : data type which ensures that no duplicate values are stored
             HashSet<string> missingDataParents = new HashSet<string>();
 
-            // Check all nodes and record parents missing local priorities
+            // Checks all nodes and record parents missing local priorities
             foreach (var node in hierarchyData)
             {
                 if (node.Children != null && node.Children.Count > 0)
@@ -44,7 +47,7 @@ namespace AHP_Mobile_App
                 }
             }
 
-            // Process only leaf nodes for ListView display
+            // Process only leaf nodes for ListView
             var leafNodes = hierarchyData.Where(node => node.Children == null || node.Children.Count == 0);
             bool anyMissingGlobalPriority = false;
             foreach (var leaf in leafNodes)
@@ -60,6 +63,7 @@ namespace AHP_Mobile_App
             }
 
             ListView1.ItemsSource = readyToDisplay;
+
 
             // Update labels based on availability of global priorities
             if (anyMissingGlobalPriority)
@@ -85,25 +89,46 @@ namespace AHP_Mobile_App
             double globalPriority = 0;
             bool missingData = false;
 
-            // For each potential parent node, calculate contribution to global priority
             foreach (var parent in hierarchyData)
             {
+                // finds the parent node of the node
                 if (parent.Children != null && parent.Children.Contains(node.Name))
                 {
+                    // Finds the position of the child node in the parent's children list
                     int index = parent.Children.IndexOf(node.Name);
+
+                    // local priorities aren't defined and the index is invalid
                     if (parent.LocalPriorities == null || index >= parent.LocalPriorities.Count)
                     {
                         missingData = true;
                         break; // Local priorities data is incomplete
                     }
 
-                    double parentGlobalPriority = (parent == hierarchyData.First()) ? 1.0 : CalculateGlobalPriority(parent, hierarchyData).GetValueOrDefault();
+                    double parentGlobalPriority;
+                    if (parent == hierarchyData.First())
+                    {
+                        parentGlobalPriority = 1.0; // Root node's global priority is 1.0
+                    }
+                    else
+                    {
+                        parentGlobalPriority = CalculateGlobalPriority(parent, hierarchyData).GetValueOrDefault(); // Recursively calculate if not the root
+                    }
+
                     globalPriority += parent.LocalPriorities[index] * parentGlobalPriority;
                 }
             }
 
-            return missingData ? (double?)null : globalPriority;
+            if (missingData)
+            {
+                return null; // Return null if any required data is missing
+            }
+            else
+            {
+                return globalPriority; // Return the calculated global priority otherwise
+            }
+
         }
+
 
         private void SetInfoLabel(HashSet<string> missingDataParents)
         {
@@ -113,13 +138,18 @@ namespace AHP_Mobile_App
             InfoLabel.IsVisible = true;
         }
 
+
         private async void OnChildNodeTapped(object sender, ItemTappedEventArgs e)
         {
+
+            // e.Item is var item: Confirms that the item exists and assigns it to item
+            // item.GetType().GetProperty("Name")?.GetValue(item) is string childName: Gets the Name property of the item
+            // ? : checks if the left-hand side is null before accessing the right-hand side
             if (e.Item is var item && item.GetType().GetProperty("Name")?.GetValue(item) is string childName)
             {
                 ((ListView)sender).SelectedItem = null; // Clear the selection
 
-                // Find the Node directly from readyToDisplayNodes
+                // Finds the first node with the given name
                 Node childNode = readyToDisplayNodes.FirstOrDefault(n => n.Name == childName);
                 if (childNode != null)
                 {
@@ -128,8 +158,10 @@ namespace AHP_Mobile_App
             }
         }
 
+
         private async void SubmitButton_Clicked(object sender, EventArgs e)
         {
+            // List of anonymous objects with Name and Rating properties
             var alternativesWithPriorities = readyToDisplayNodes.Select(node => new
             {
                 node.Name,

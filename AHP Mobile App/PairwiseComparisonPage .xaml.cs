@@ -11,7 +11,11 @@ namespace AHP_Mobile_App
     public partial class PairwiseComparisonPage : ContentPage
     {
         private Node parentNode;
+
+        // Holds the list of paired comparisons
         public List<PairedComparison> Comparisons { get; private set; }
+
+        // Holds the list of preference strengths as options for the picker
         public static List<Preference> PreferencesList { get; } = new List<Preference>
         {
             new Preference(1, "1: Equal importance"),
@@ -38,15 +42,18 @@ namespace AHP_Mobile_App
         {
             Comparisons = new List<PairedComparison>();
             var children = parentNode.Children;
+
+            // Loop over each child node
             for (int i = 0; i < children.Count; i++)
             {
+                // Loop over each subsequent child node to form a pair with the i-th child
                 for (int j = i + 1; j < children.Count; j++)
                 {
                     Comparisons.Add(new PairedComparison
                     {
                         Node1 = children[i],
                         Node2 = children[j],
-                        IsToggled = false,
+                        IsToggled = false,  // Intially false
                         PreferenceStrength = null  // Initially no preference selected
                     });
                 }
@@ -66,20 +73,30 @@ namespace AHP_Mobile_App
             await Navigation.PopAsync();
         }
 
+
+        // checks if all preferences are set
         private bool AreAllPreferencesSet()
         {
             return Comparisons.All(c => c.PreferenceStrength != null);
         }
 
+
+        // ref ensures that any changes made to matrix inside the method are reflected in the original matrix passed to it.
         void PopulateMatrix(ref double[,] matrix, List<PairedComparison> comparisons)
         {
             int n = parentNode.Children.Count;
+
             for (int i = 0; i < n; i++)
             {
                 matrix[i, i] = 1; // Diagonal is always 1
+
+                // This loop starts from 'i + 1' to ensure comparisons are only made once per pair
                 for (int j = i + 1; j < n; j++)
                 {
+                    // => Lambda expression - 'goes to' operator
+                    // The left side of the operator specifies the input parameters, and the right side is an expression or a statement block that uses these parameters.
                     var comparison = comparisons.Find(c => (c.Node1 == parentNode.Children[i] && c.Node2 == parentNode.Children[j]));
+
                     if (comparison != null && comparison.PreferenceStrength != null)
                     {
                         double strength = comparison.PreferenceStrength.Value;
@@ -102,9 +119,9 @@ namespace AHP_Mobile_App
         public List<double> CalculateLocalPriorities(double[,] matrix, int size)
         {
             List<double> localPriorities = new List<double>();
-            double[] columnTotals = new double[size];
 
             // Calculate column totals
+            double[] columnTotals = new double[size];
             for (int j = 0; j < size; j++)
             {
                 for (int i = 0; i < size; i++)
@@ -124,7 +141,7 @@ namespace AHP_Mobile_App
                 }
             }
 
-            // Calculate local priorities by normalizing row totals
+            // Calculate local priorities
             double totalRowSum = rowTotals.Sum();
             for (int i = 0; i < size; i++)
             {

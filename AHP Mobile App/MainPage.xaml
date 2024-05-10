@@ -5,16 +5,21 @@
              Title="Analytic Hierarchy Process">
 
     <StackLayout>
+        
         <ListView x:Name="ListView1" 
                   RowHeight="100" 
                   VerticalOptions="CenterAndExpand" 
                   ItemTapped="ListView1_ItemTapped">
+            
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextCell Text="{Binding Title}" Detail="{Binding Description}" />
+                    <TextCell Text="{Binding Title}" 
+                              Detail="{Binding Description}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
+            
         </ListView>
+        
     </StackLayout>
 
 </ContentPage>

@@ -17,53 +17,58 @@ namespace AHP_Mobile_App
         public HierarchyPage(Node node)
         {
             InitializeComponent();
-            parentNode = node;  // Initialize parentNode with the constructor argument
+            parentNode = node;
             this.BindingContext = parentNode;
         }
 
         private async void OnChildNodeTapped(object sender, ItemTappedEventArgs e)
         {
+            // e.Item is var item: Confirms that the item exists and assigns it to item
+            // item.GetType().GetProperty("Name")?.GetValue(item) is string childName: Gets the Name property of the item
+            // ? : checks if the left-hand side is null before accessing the right-hand side
             if (e.Item is var item && item.GetType().GetProperty("Name")?.GetValue(item) is string childName)
             {
                 // Clear the selection
                 ((ListView)sender).SelectedItem = null;
 
-                // Find the Node with the given name
+                // Finds the Node with the given name
                 Node childNode = FindNodeByName(App.HierarchyData, childName);
                 if (childNode != null)
                 {
-                    // Navigate to a new HierarchyPage with the found node
+                    // Navigates to a new HierarchyPage with the found node
                     await Navigation.PushAsync(new HierarchyPage(childNode));
                 }
             }
         }
 
 
+        // IEnumerable : A non-generic collection of objects that can be enumerated.
         private Node FindNodeByName(IEnumerable<Node> nodes, string name)
         {
             foreach (var node in nodes)
             {
+                // If the node's found immediately, returs it
                 if (node.Name == name) return node;
 
                 if (node.Children != null)
                 {
                     foreach (var childName in node.Children)
                     {
-                        // Instead of using LINQ to find the first matching node,
-                        // we iterate through the nodes manually.
+
                         Node foundNode = null;
                         foreach (var n in nodes)
                         {
                             if (n.Name == childName)
                             {
                                 foundNode = n;
-                                break; // Exit the loop once we've found the node
+                                break; // Exits the loop once we have found the node
                             }
                         }
 
                         // If a node is found, we then recursively call FindNodeByName
                         if (foundNode != null)
                         {
+                            // new[] { foundNode } : Creates an array with a single element as FindNodeByName method expects an IEnumerable<Node>
                             var found = FindNodeByName(new[] { foundNode }, name);
                             if (found != null) return found; // If the recursive call found the node, return it
                         }
@@ -71,13 +76,14 @@ namespace AHP_Mobile_App
                 }
             }
 
-            return null; // If no node is found, return null
+            return null; // If no node is found, returns null
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            // Set button visibility based on the presence of children
+
+            // Sets button visibility based on the presence of children
             EvaluateButton.IsVisible = parentNode.Children != null && parentNode.Children.Any();
 
             // Only update the ListView if the Evaluate button is visible (i.e., there are children)
@@ -87,7 +93,7 @@ namespace AHP_Mobile_App
             }
             else
             {
-                // Clear the ListView or handle it appropriately for leaf nodes
+                // Clear the ListView for leaf nodes
                 ListView1.ItemsSource = new List<object>();
             }
         }
@@ -96,6 +102,8 @@ namespace AHP_Mobile_App
         {
             if (parentNode.LocalPriorities != null && parentNode.LocalPriorities.Any())
             {
+                // uses LINQ to transform the children and their priorities into a separate type
+                // LINQ : Language Integrated Query - resembles SQL queries
                 var childrenWithPriorities = parentNode.Children.Select((child, index) => new
                 {
                     Name = child,
@@ -107,7 +115,7 @@ namespace AHP_Mobile_App
             }
             else
             {
-                // Handle the case where LocalPriorities might not be evaluated yet
+                // Handles the case where LocalPriorities might not be evaluated yet
                 var childrenWithoutPriorities = parentNode.Children.Select(child => new
                 {
                     Name = child,
@@ -120,10 +128,9 @@ namespace AHP_Mobile_App
         }
 
 
-
         private async void EvaluateButton_Clicked(object sender, EventArgs e)
         {
-            // Navigate to PairwiseComparisonPage, pass the parentNode for which to evaluate
+            // Navigates to PairwiseComparisonPage, pass the parentNode for which to evaluate
             if (parentNode != null)
             {
                 await Navigation.PushAsync(new PairwiseComparisonPage(parentNode));

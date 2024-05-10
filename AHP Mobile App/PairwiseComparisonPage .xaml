@@ -2,43 +2,63 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:AHP_Mobile_App"
              x:Class="AHP_Mobile_App.PairwiseComparisonPage">
+    
     <ScrollView>
+        
         <StackLayout Padding="10" VerticalOptions="FillAndExpand">
 
             <Label Text="Paired Comparisons:"
-                   FontAttributes="Bold" HorizontalOptions="Center"
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center"
                    FontSize="18"/>
 
             <Label Text="Use switches to indicate pairwise preferences. Select the preference strength from the picker."
-                       FontSize="18" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                   FontSize="18" 
+                   HorizontalOptions="Center" 
+                   HorizontalTextAlignment="Center"/>
 
             <ListView x:Name="ListViewComparisons"
                       ItemsSource="{Binding Comparisons}" 
                       VerticalOptions="CenterAndExpand"
                       HorizontalOptions="FillAndExpand"
                       RowHeight="150">
+                
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
+                            
                             <StackLayout Orientation="Vertical" Padding="5">
+                                
                                 <StackLayout Orientation="Horizontal">
-                                    <Label Text="{Binding Node1}" VerticalOptions="Center"/>
-                                    <Switch IsToggled="{Binding IsToggled}" VerticalOptions="Center"/>
-                                    <Label Text="{Binding Node2}" VerticalOptions="Center"/>
+                                    
+                                    <Label Text="{Binding Node1}" 
+                                           VerticalOptions="Center"/>
+                                    <Switch IsToggled="{Binding IsToggled}" 
+                                            VerticalOptions="Center"/>
+                                    <Label Text="{Binding Node2}" 
+                                           VerticalOptions="Center"/>
+                                    
                                 </StackLayout>
+
+                                <!-- Mode=TwoWay : Updates the property whenever the user selects an item, curcial for any dynamic changes in the UI-->
                                 <Picker ItemsSource="{Binding Source={x:Static local:PairwiseComparisonPage.PreferencesList}}"
                                         ItemDisplayBinding="{Binding Description}"
                                         SelectedItem="{Binding PreferenceStrength, Mode=TwoWay}"
-                                        VerticalOptions="Center" HorizontalOptions="Center"
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center"
                                         WidthRequest="250"/>
 
                             </StackLayout>
+                            
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                
             </ListView>
 
-            <Button Text="Save" Command="{Binding SaveCommand}" BackgroundColor="LightSeaGreen" Clicked="SaveButton_Clicked"/>
+            <Button Text="Save" 
+                    BackgroundColor="LightSeaGreen" 
+                    Clicked="SaveButton_Clicked"/>
 
         </StackLayout>
     </ScrollView>

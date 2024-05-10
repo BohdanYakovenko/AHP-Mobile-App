@@ -10,6 +10,7 @@ namespace AHP_Mobile_App
 {
     public partial class MainPage : ContentPage
     {
+        // Holds the menu options in the array.
         public MainMenuItem[] mainMenuItems;
         public MainPage()
         {

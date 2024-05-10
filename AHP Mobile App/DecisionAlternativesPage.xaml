@@ -3,26 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AHP_Mobile_App.DecisionAlternativesPage">
     <ContentPage.Content>
-        <Grid Padding="10" RowSpacing="10" VerticalOptions="FillAndExpand">
+        
+        <Grid Padding="10" 
+              RowSpacing="10" 
+              VerticalOptions="FillAndExpand">
+            
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- For Header -->
                 <RowDefinition Height="*"/>
-                <!-- For ListView, takes all available space -->
                 <RowDefinition Height="Auto"/>
-                <!-- For Submit Button -->
             </Grid.RowDefinitions>
 
-            <StackLayout VerticalOptions="FillAndExpand" Grid.Row="0" Margin="0,100,0,0" >
-            <Label x:Name="HeaderLabel"
-                   FontAttributes="Bold"
-                   FontSize="18"
-                   HorizontalTextAlignment="Center" />
+            <StackLayout VerticalOptions="FillAndExpand" 
+                         Grid.Row="0" 
+                         Margin="0,100,0,0" >
+                
+                <Label x:Name="HeaderLabel"
+                       FontAttributes="Bold"
+                       FontSize="18"
+                       HorizontalTextAlignment="Center" />
 
-            <Label x:Name="InfoLabel"
-                   FontSize="18"
-                   IsVisible="False"
-                   HorizontalTextAlignment="Center" />
+                <Label x:Name="InfoLabel"
+                       FontSize="18"
+                       IsVisible="False"
+                       HorizontalTextAlignment="Center" />
+                
             </StackLayout>
 
             <ListView Grid.Row="1"
@@ -31,11 +36,14 @@
                       ItemTapped="OnChildNodeTapped"
                       VerticalOptions="FillAndExpand"
                       Margin="0,75,0,0">
+                
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding Name}" Detail="{Binding Priority}" />
+                        <TextCell Text="{Binding Name}" 
+                                  Detail="{Binding Priority}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                
             </ListView>
 
             <Button Grid.Row="2"
@@ -46,5 +54,6 @@
                     Clicked="SubmitButton_Clicked"
                     VerticalOptions="End"/>
         </Grid>
+        
     </ContentPage.Content>
 </ContentPage>
